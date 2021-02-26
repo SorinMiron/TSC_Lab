@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 YAAAYYY SSH WORKSssss
 YAAAYYY SSH WORKSsssssss
+=======
+YAAAYYY SSH WORKS merge
+>>>>>>> d3a0b38de465cf7ff8c022f18e9701cd41024050
