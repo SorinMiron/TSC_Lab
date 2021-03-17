@@ -10,7 +10,7 @@
  * www.sutherland-hdl.com
  **********************************************************************/
 
-module instr_register_test (tb_ifc io);  // interface port
+module instr_register_test (tb_ifc tbifc);  // interface port
 
   timeunit 1ns/1ns;
 
@@ -27,20 +27,20 @@ module instr_register_test (tb_ifc io);  // interface port
     $display(    "***********************************************************");
 
     $display("\nReseting the instruction register...");
-    io.write_pointer = 5'h00;      // initialize write pointer
-    io.read_pointer  = 5'h1F;      // initialize read pointer
-    io.load_en       = 1'b0;       // initialize load control line
-    io.reset_n       = 1'b0;       // assert reset_n (active low)
-    repeat (2) @(posedge io.clk) ;  // hold in reset for 2 clock cycles
-    io.reset_n       = 1'b1;       // assert reset_n (active low)
+    tbifc.cb.write_pointer <= 5'h00;      // initialize write pointer
+    tbifc.cb.read_pointer  <= 5'h1F;      // initialize read pointer
+    tbifc.cb.load_en       <= 1'b0;       // initialize load control line
+    tbifc.cb.reset_n       <= 1'b0;       // assert reset_n (active low)
+    repeat (2) @(tbifc.cb) ;  // hold in reset for 2 clock cycles
+    tbifc.cb.reset_n <= 1'b1;       // assert reset_n (active low)
 
     $display("\nWriting values to register stack...");
-    @(posedge io.clk) io.load_en = 1'b1;  // enable writing to register
+    @(tbifc.cb) tbifc.cb.load_en <= 1'b1;  // enable writing to register
     repeat (3) begin
-      @(posedge io.clk) randomize_transaction;
-      @(negedge io.clk) print_transaction;
+      @(tbifc.cb) randomize_transaction;
+      @(tbifc.cb) print_transaction;
     end
-    @(posedge io.clk) io.load_en = 1'b0;  // turn-off writing to register
+    @(tbifc.cb) tbifc.cb.load_en <= 1'b0;  // turn-off writing to register
 
     // read back and display same three register locations
     $display("\nReading back the same register locations written...");
@@ -48,11 +48,11 @@ module instr_register_test (tb_ifc io);  // interface port
       // A later lab will replace this loop with iterating through a
       // scoreboard to determine which address were written and the
       // expected values to be read back
-      @(posedge io.clk) io.read_pointer = i;
-      @(negedge io.clk) print_results;
+      @(tbifc.cb) tbifc.cb.read_pointer <= i;
+      @(tbifc.cb) print_results;
     end
 
-    @(posedge io.clk) ;
+    @(tbifc.cb) ;
     $display("\n***********************************************************");
     $display(  "***  THIS IS NOT A SELF-CHECKING TESTBENCH (YET).  YOU  ***");
     $display(  "***  NEED TO VISUALLY VERIFY THAT THE OUTPUT VALUES     ***");
@@ -70,24 +70,24 @@ module instr_register_test (tb_ifc io);  // interface port
     // write_pointer values in a later lab
     //
     static int temp = 0;
-    io.operand_a     = $random(seed)%16;                 // between -15 and 15
-    io.operand_b     = $unsigned($random)%16;            // between 0 and 15
-    io.opcode        = opcode_t'($unsigned($random)%8);  // between 0 and 7, cast to opcode_t type
-    io.write_pointer = temp++;
+    tbifc.cb.operand_a     <= $random(seed)%16;                 // between -15 and 15
+    tbifc.cb.operand_b     <= $unsigned($random)%16;            // between 0 and 15
+    tbifc.cb.opcode        <= opcode_t'($unsigned($random)%8);  // between 0 and 7, cast to opcode_t type
+    tbifc.cb.write_pointer <= temp++;
   endfunction: randomize_transaction
 
   function void print_transaction;
-    $display("Writing to register location %0d: ", io.write_pointer);
-    $display("  opcode = %0d (%s)", io.opcode, io.opcode.name);
-    $display("  operand_a = %0d",   io.operand_a);
-    $display("  operand_b = %0d\n", io.operand_b);
+    $display("Writing to register location %0d: ", tbifc.cb.write_pointer);
+    $display("  opcode = %0d (%s)", tbifc.cb.opcode, tbifc.cb.opcode.name);
+    $display("  operand_a = %0d",   tbifc.cb.operand_a);
+    $display("  operand_b = %0d\n", tbifc.cb.operand_b);
   endfunction: print_transaction
 
   function void print_results;
-    $display("Read from register location %0d: ", io.read_pointer);
-    $display("  opcode = %0d (%s)", io.instruction_word.opc, io.instruction_word.opc.name);
-    $display("  operand_a = %0d",   io.instruction_word.op_a);
-    $display("  operand_b = %0d\n", io.instruction_word.op_b);
+    $display("Read from register location %0d: ", tbifc.cb.read_pointer);
+    $display("  opcode = %0d (%s)", tbifc.cb.instruction_word.opc, tbifc.cb.instruction_word.opc.name);
+    $display("  operand_a = %0d",   tbifc.cb.instruction_word.op_a);
+    $display("  operand_b = %0d\n", tbifc.cb.instruction_word.op_b);
   endfunction: print_results
 
 endmodule: instr_register_test
