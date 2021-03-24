@@ -1,0 +1,20 @@
+Class -> o clasa transaction
+				-> vom pune 4 variabile opcode opA opB rightPointer
+				-> vom muta functia randomizeTransaction 
+				-> vom muta printTrasaction
+		 -> O classa driver
+			-> instantiem clasa transaction obiect Transaction transaction
+			-> declaram interfata tf_ifc cu virtual in clasa
+			-> declaram un constructor new() unde vom instantia interfata noastra tf_ifc(v_ifc)
+			-> facem o functie reset_signals si primeste liniile pana la reset = 1
+			-> facem o functie generateTransaction care are un repeat de 3 ori si vom chema tr.randomizeTransaction
+			-> facem tr.printTrasacaction
+			-> denumirea interfatie v_ifc.cb <= tr.opA adaugam valorile in interfata
+			
+		Driver.new 
+		reset_signals
+		driver.generateTransaction
+		
+		-> o clasa monitor va primi interfatra prin new()
+			-> o fucntie readRegister(); -> codul din forul respectiv
+			-> printResult 
