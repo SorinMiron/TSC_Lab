@@ -68,6 +68,7 @@ class Driver;
       bins val_opA[] = {[-15:15]};
       bins val_max = {15};
       bins val_min = {-15};
+	  bins val_zero = {0};
     }
     cov_2: coverpoint vifc.cb.operand_b {
       bins val_opB[] = {[0:15]};
@@ -85,7 +86,23 @@ class Driver;
      ignore_bins opA_ignore = binsof (cov_1.val_opA);
      ignore_bins opB_ignore = binsof (cov_2.val_opB);
     }
-    
+    cov_6: cross cov_0, cov_1, cov_2{
+     ignore_bins opA_ignore1 = binsof (cov_1.val_opA);
+     ignore_bins opA_ignore2 = binsof (cov_1.val_max);
+     ignore_bins opB_ignore1 = binsof (cov_2.val_opB);
+     ignore_bins opB_ignore2 = binsof (cov_2.val_max);
+    }
+	cov_7: cross cov_0, cov_3{
+     ignore_bins opA_ignore1 = binsof (cov_3.neg);
+    }
+	cov_8: cross cov_1, cov_2{
+     ignore_bins opB_ignore1 = binsof (cov_2.val_opB);
+     ignore_bins opB_ignore2 = binsof (cov_2.val_max);
+	 
+	 ignore_bins opA_ignore1 = binsof (cov_1.val_opA);
+     ignore_bins opA_ignore2 = binsof (cov_1.val_max);
+	 ignore_bins opA_ignore3 = binsof (cov_1.val_min);
+    }
   endgroup;
 
     function new(virtual tb_ifc vifc);
